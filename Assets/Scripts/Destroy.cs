@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
 public class Destroy : MonoBehaviour
 {
     [Range(0, 1)] public float look_treshold = 0.95f;
     [Range(0, 100)] public float distance_treshold = 5f;
+
+    public event Action OnDeactivation;
 
     private bool active_ = true;
     private bool looked_at_ = false;
@@ -18,7 +21,11 @@ public class Destroy : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.Alpha1) && looked_at_ && close_enough_)
         {
             active_ = !active_;
-            GetComponent<Renderer>().enabled = active_;
+
+            if (OnDeactivation != null) OnDeactivation();
+
+            //GetComponent<Renderer>().enabled = active_;
+            gameObject.SetActive(active_);
         }
 
         float dot = Vector3.Dot(
