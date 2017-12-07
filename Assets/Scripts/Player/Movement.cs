@@ -41,4 +41,9 @@ public class Movement : MonoBehaviour
 
         controller_.Move(move_direction_);
     }
+
+    private void OnDestroy()
+    {
+        Cursor.lockState = CursorLockMode.None;
+    }
 }

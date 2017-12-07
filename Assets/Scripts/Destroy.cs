@@ -26,6 +26,7 @@ public class Destroy : MonoBehaviour
 
             //GetComponent<Renderer>().enabled = active_;
             gameObject.SetActive(active_);
+            //Destroy(gameObject);
         }
 
         float dot = Vector3.Dot(

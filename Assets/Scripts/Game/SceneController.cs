@@ -20,6 +20,16 @@ public class SceneController : MonoBehaviour
         yield return StartCoroutine(LoadSceneAndSetActive(starting_scene));
     }
 
+    public void LoadNewScene(int buildIndex)
+    {
+        StartCoroutine(SwitchScenes(buildIndex));
+    }
+
+    public void LoadNewScene(string sceneName)
+    {
+        StartCoroutine(SwitchScenes(sceneName));
+    }
+
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.Keypad1))
@@ -28,22 +38,41 @@ public class SceneController : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Keypad0))
         {
-            StartCoroutine(SwitchScenes(starting_scene));
+            StartCoroutine(SwitchScenes("StartingScene"));
+        }
+        if (Input.GetKeyDown(KeyCode.KeypadPeriod))
+        {
+            StartCoroutine(SwitchScenes("MainMenu"));
         }
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             GameState.Reset();
         }
-    }       
-        
-    private IEnumerator SwitchScenes(string scene_name)
+    }
+
+    // We have the same function(s) two times to support the addressing
+    // of scenes both by the Build Index and the Scene Name
+
+    private IEnumerator SwitchScenes(string sceneName)
     {
         if (BeforeSceneUnload != null) BeforeSceneUnload();
 
         yield return SceneManager.UnloadSceneAsync(
             SceneManager.GetActiveScene().buildIndex
             );
-        yield return StartCoroutine(LoadSceneAndSetActive(scene_name));
+        yield return StartCoroutine(LoadSceneAndSetActive(sceneName));
+
+        if (AfterSceneLoad != null) AfterSceneLoad();
+    }
+
+    private IEnumerator SwitchScenes(int buildIndex)
+    {
+        if (BeforeSceneUnload != null) BeforeSceneUnload();
+
+        yield return SceneManager.UnloadSceneAsync(
+            SceneManager.GetActiveScene().buildIndex
+            );
+        yield return StartCoroutine(LoadSceneAndSetActive(buildIndex));
 
         if (AfterSceneLoad != null) AfterSceneLoad();
     }
@@ -54,4 +83,12 @@ public class SceneController : MonoBehaviour
         Scene new_scene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
         SceneManager.SetActiveScene(new_scene);
     }
+
+    private IEnumerator LoadSceneAndSetActive(int buildIndex)
+    {
+        yield return SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Additive);
+        Scene new_scene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
+        SceneManager.SetActiveScene(new_scene);
+    }
+
 }

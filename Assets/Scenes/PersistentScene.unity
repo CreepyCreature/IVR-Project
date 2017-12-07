@@ -195,7 +195,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1199394837}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 818, y: 250, z: 0}
+  m_LocalPosition: {x: 785.5, y: 250, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1949474598}
@@ -314,7 +314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fdcb9193219a6549a1d4b01b8b0cd77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  starting_scene: StartingScene
+  starting_scene: MainMenu
 --- !u!4 &1970743887
 Transform:
   m_ObjectHideFlags: 0
