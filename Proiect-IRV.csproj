@@ -298,6 +298,7 @@
     <Compile Include="Assets\Scripts\Audio\Sound.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Scripts\GameObjects\Checkpoint.cs" />
     <Compile Include="Assets\Scripts\GameObjects\Hoverboard.cs" />
     <Compile Include="Assets\Scripts\GameObjects\PickUp.cs" />
     <Compile Include="Assets\Scripts\GameObjects\Rewind\PointInTime.cs" />
