@@ -7,6 +7,8 @@ public class PickUpCoin : MonoBehaviour {
     public delegate void CoinDestroyed(string gameObjectName);
     public event CoinDestroyed OnCoinDestroyed;
 
+    public ParticleSystem particles;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -22,7 +24,15 @@ public class PickUpCoin : MonoBehaviour {
         {
             PlayerResources.CollectCoin();
             AudioManager.Instance.PlaySound("CollectCoin");
-            //gameObject.SetActive(false);
+            GetComponent<MeshRenderer>().enabled = false;
+
+            var g = Instantiate(particles, transform.position, Quaternion.identity);
+            g.Play();
+            Destroy(g.gameObject, g.main.duration);
+
+            //particles.Play();
+            //Destroy(particles.gameObject, particles.main.duration);
+            //transform.DetachChildren();
 
             if (OnCoinDestroyed != null)
             {
