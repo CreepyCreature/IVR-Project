@@ -52,6 +52,10 @@ public class GameManager : MonoBehaviour {
         {
             GameData.Load();
         }
+        if (Input.GetKeyDown(KeyCode.KeypadMinus))
+        {
+            GameData.Clear();
+        }
 	}
 
     public void LoadScene (int sceneIndex)
@@ -68,7 +72,7 @@ public class GameManager : MonoBehaviour {
         GameData.SetCheckpoint(sceneIndex, newPosition);
         GameData.Save();
 
-        Debug.Log("GameManager::Saving Player position " + checkpointDictionary[sceneIndex] + " at Scene Index "+ sceneIndex);
+        // Debug.Log("GameManager::Saving Player position " + checkpointDictionary[sceneIndex] + " at Scene Index "+ sceneIndex);
     }
 
     public Vector3 GetPlayerPosition (int sceneIndex = -1)
