@@ -1160,6 +1160,11 @@ Prefab:
       propertyPath: win_condition_
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 114080592671983512, guid: bfc7516791c0f804187f5cf511a311ef,
+        type: 2}
+      propertyPath: playerInfoUI
+      value: 
+      objectReference: {fileID: 1311821855}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bfc7516791c0f804187f5cf511a311ef, type: 2}
   m_IsPrefabParent: 0
@@ -1260,14 +1265,34 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 224700300189451570, guid: 456c5e970f1401b44b1023516ec40b45,
+    - target: {fileID: 114114871179067460, guid: 456c5e970f1401b44b1023516ec40b45,
         type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: 7.3861084
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114114871179067460, guid: 456c5e970f1401b44b1023516ec40b45,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114772635773756796, guid: 456c5e970f1401b44b1023516ec40b45,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114772635773756796, guid: 456c5e970f1401b44b1023516ec40b45,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 456c5e970f1401b44b1023516ec40b45, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1311821855 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1948440916318416, guid: 456c5e970f1401b44b1023516ec40b45,
+    type: 2}
+  m_PrefabInternal: {fileID: 1311821854}
 --- !u!4 &1349920178 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4271417933675832, guid: f5663af7ab93f2546935e56e6513b90b,

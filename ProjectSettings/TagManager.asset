@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PickUp
   - PickUpCoin
+  - PlayerInfoUI
   layers:
   - Default
   - TransparentFX

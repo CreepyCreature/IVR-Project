@@ -6,8 +6,9 @@ public static class PlayerResources
 {
 	public static int Coins { get; set; }
 
-    public delegate void CoinCollected();
-    public static event CoinCollected OnCoinChange;
+    public delegate void CoinCountChanged();
+    public static event CoinCountChanged OnCoinChange;
+    public static event CoinCountChanged OnCoinCollected;
 
     //public PlayerResources () {; }
 
@@ -15,6 +16,7 @@ public static class PlayerResources
     {
         Coins++;
         if (OnCoinChange != null) OnCoinChange();
+        if (OnCoinCollected != null) OnCoinCollected();
     }
 
     public static void Reset ()

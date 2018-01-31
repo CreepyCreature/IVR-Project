@@ -7,8 +7,10 @@ public class PlayerInfo : MonoBehaviour
 {
     public int win_condition_;
 
+    public GameObject playerInfoUI;
     public TMPro.TMP_Text coin_count_text_;
     public TMPro.TMP_Text win_text_;
+    public GameObject coin_collected_text_;
 
     // Use this for initialization
     void Start ()
@@ -16,6 +18,9 @@ public class PlayerInfo : MonoBehaviour
         win_text_.text = "";
         SetCoinCountText();
         PlayerResources.OnCoinChange += UpdateCoins;
+        PlayerResources.OnCoinCollected += OnCoinCollected;
+
+        UpdateCoins();
     }
 
     public void UpdateCoins ()
@@ -33,6 +38,13 @@ public class PlayerInfo : MonoBehaviour
         {
             win_text_.text = "You Win!";
         }
+    }
+
+    public void OnCoinCollected ()
+    {
+        GameObject playerInfoUI = GameObject.FindGameObjectWithTag("PlayerInfoUI");
+        GameObject toast = Instantiate(coin_collected_text_, playerInfoUI.transform);
+        Destroy(toast, 0.66f);
     }
 
     private void SetCoinCountText ()

@@ -1501,6 +1501,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114080592671983512, guid: bfc7516791c0f804187f5cf511a311ef,
         type: 2}
+      propertyPath: playerInfoUI
+      value: 
+      objectReference: {fileID: 1897087915}
+    - target: {fileID: 114080592671983512, guid: bfc7516791c0f804187f5cf511a311ef,
+        type: 2}
       propertyPath: coin_count_text_
       value: 
       objectReference: {fileID: 1070779123}
@@ -1512,22 +1517,6 @@ Prefab:
     - target: {fileID: 1700593976930266, guid: bfc7516791c0f804187f5cf511a311ef, type: 2}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 135116477616937808, guid: bfc7516791c0f804187f5cf511a311ef,
-        type: 2}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 13400000, guid: d8119724ce9cc8e498583a78bcc6ed41,
-        type: 2}
-    - target: {fileID: 114529099683392672, guid: bfc7516791c0f804187f5cf511a311ef,
-        type: 2}
-      propertyPath: max_recorded_time
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 114080592671983512, guid: bfc7516791c0f804187f5cf511a311ef,
-        type: 2}
-      propertyPath: win_condition_
-      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bfc7516791c0f804187f5cf511a311ef, type: 2}
@@ -1726,6 +1715,11 @@ Transform:
   m_Father: {fileID: 346077346}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1897087915 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1948440916318416, guid: 456c5e970f1401b44b1023516ec40b45,
+    type: 2}
+  m_PrefabInternal: {fileID: 2103460770}
 --- !u!1 &1951104745
 GameObject:
   m_ObjectHideFlags: 0
