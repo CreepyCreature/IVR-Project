@@ -9,7 +9,6 @@ public class GameManager : MonoBehaviour {
 
     private Vector3 savedPosition;
     private Dictionary<int, Vector3> checkpointDictionary = new Dictionary<int, Vector3>();
-
     private List<string> destroyedCoins = new List<string>();
     
     void Awake ()
@@ -33,17 +32,13 @@ public class GameManager : MonoBehaviour {
         int sceneIndex = ActiveSceneIndex();
         PlayerResources.Coins = GameData.GetCoinCount(sceneIndex);
         destroyedCoins = GameData.GetDestroyedCoins(sceneIndex);
-
-        //DestroyCollectedCoins();
     }
 
-	// Use this for initialization
 	void Start ()
     {
         DestroyCollectedCoins();
     }
 	
-	// Update is called once per frame
 	void Update ()
     {
         if (Input.GetKeyDown(KeyCode.Keypad1))
@@ -78,9 +73,7 @@ public class GameManager : MonoBehaviour {
         SceneManager.LoadSceneAsync(sceneIndex);
 
         destroyedCoins = GameData.GetDestroyedCoins(sceneIndex);
-
         PlayerResources.Coins = GameData.GetCoinCount(sceneIndex);
-        //DestroyCollectedCoins();
     }
 
 
@@ -88,7 +81,7 @@ public class GameManager : MonoBehaviour {
     {
         foreach (var coin in GameObject.FindGameObjectsWithTag("PickUpCoin"))
         {
-            Debug.Log("Analyzing " + coin.name);
+            // Debug.Log("Analyzing " + coin.name);
 
             if (destroyedCoins.Exists(x => x == coin.name))
             {                
@@ -157,6 +150,13 @@ public class GameManager : MonoBehaviour {
             return true;
         else
             return false;
+    }
+
+    public void ResetGameState ()
+    {
+        checkpointDictionary.Clear();
+        destroyedCoins.Clear();
+        GameData.Clear();
     }
 
     // Gets the active scene's build index; saving the world
