@@ -14,6 +14,18 @@ public struct CheckpointStruct
     public Vector3 Position { get; set; }
 }
 
+public struct CoinCountStruct
+{
+    public int SceneIndex { get; set; }
+    public int CoinCount { get; set; }
+}
+
+public struct DestroyedCoinStruct
+{
+    public int SceneIndex { get; set; }
+    public string CoinName { get; set; }
+}
+
 [XmlRoot("GameData")]
 public class GameData
 {
@@ -25,22 +37,20 @@ public class GameData
     private static string XMLFileName = "/GameData.xml";
     public static string gameDataFile = Application.persistentDataPath + XMLFileName;
 
+    [XmlArray("DestroyedCoins")]
+    [XmlArrayItem(ElementName = "DestroyedCoin")]
+    public List<DestroyedCoinStruct> destroyedCoins = new List<DestroyedCoinStruct>();
+
+    [XmlArray("CoinCount")]
+    [XmlArrayItem(ElementName = "Coins")]
+    public List<CoinCountStruct> coinCountProxy = new List<CoinCountStruct>();
+
     [XmlArray("Checkpoints")]
     [XmlArrayItem(ElementName = "Checkpoint")]
     public List<CheckpointStruct> checkpointsProxy = new List<CheckpointStruct>();
 
     [XmlIgnore]
     private static Dictionary<int, Vector3> checkpoints = new Dictionary<int, Vector3>();
-    
-    //[XmlArray("Checkpoints")]
-    //[XmlArrayItem(ElementName = "Checkpoint")]
-    //private static List<CheckpointProxy> CheckpointProxy { get; set; }
-    //[XmlIgnore]
-    //private static Dictionary<int, Vector3> CheckpointDictionary
-    //{
-    //    get { return CheckpointProxy.ToDictionary(x => x.Key, x => x.Value); }
-    //    set { CheckpointProxy = value.Select(x => new global::CheckpointProxy() { Key = x.Key, Value = x.Value }).ToList(); }
-    //}
 
     public static void Save ()
     {
@@ -76,9 +86,60 @@ public class GameData
 
     public static void Clear ()
     {
-        checkpoints.Clear();
+        Instance.destroyedCoins.Clear();
+        Instance.coinCountProxy.Clear();
         Instance.checkpointsProxy.Clear();
+        checkpoints.Clear();
         Save();
+    }
+
+    public static void UpdateDestroyedCoins (int sceneIndex, string coinName)
+    {
+        if (Instance.destroyedCoins.Exists(x => x.SceneIndex == sceneIndex && x.CoinName == coinName))
+        {
+            return;
+        }
+
+        DestroyedCoinStruct coinStruct = new DestroyedCoinStruct();
+        coinStruct.SceneIndex = sceneIndex;
+        coinStruct.CoinName = coinName;
+        Instance.destroyedCoins.Add(coinStruct);
+    }
+
+    public static List<string> GetDestroyedCoins (int sceneIndex)
+    {
+        List<string> coinNamesList = new List<string>();
+        var coinStruct = Instance.destroyedCoins.FindAll(x => x.SceneIndex == sceneIndex);
+        foreach (var coin in coinStruct)
+        {
+            coinNamesList.Add(coin.CoinName);
+        }
+
+        return coinNamesList;
+    }
+
+    public static void UpdateCoinCount (int sceneIndex, int coinCount)
+    {
+        if (Instance.coinCountProxy.Exists(x => x.SceneIndex == sceneIndex))
+        {
+            Instance.coinCountProxy.RemoveAll(x => x.SceneIndex == sceneIndex);
+        }
+
+        CoinCountStruct coinStruct = new CoinCountStruct();
+        coinStruct.SceneIndex = sceneIndex;
+        coinStruct.CoinCount = coinCount;
+        Instance.coinCountProxy.Add(coinStruct);
+    }
+
+    public static int GetCoinCount (int sceneIndex)
+    {
+        if (Instance.coinCountProxy.Exists(x => x.SceneIndex == sceneIndex))
+        {
+            int count = Instance.coinCountProxy.Find(x => x.SceneIndex == sceneIndex).CoinCount;
+            return count;
+        }
+
+        return 0;
     }
 
     public static void SetCheckpoint (int sceneIndex, Vector3 position)
@@ -108,19 +169,5 @@ public class GameData
         {
             checkpoints[c.SceneIndex] = c.Position;
         }
-    }
-
-    private static void SerializeCheckpointDictionary()
-    {
-        //foreach (var key in checkpoints.Keys)
-        //{
-        //    Debug.Log("adding");
-        //    Instance.checkpointProxy.Add(new CheckpointProxy(key, checkpoints[key]));
-        //}
-
-        //foreach (var e in Instance.checkpointProxy)
-        //{
-        //    Debug.Log(e.Key + " => " + e.Value);
-        //}
     }
 }

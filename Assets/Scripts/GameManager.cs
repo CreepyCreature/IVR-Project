@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour {
 
     private Vector3 savedPosition;
     private Dictionary<int, Vector3> checkpointDictionary = new Dictionary<int, Vector3>();
+
+    private List<string> destroyedCoins = new List<string>();
     
     void Awake ()
     {
@@ -19,6 +21,7 @@ public class GameManager : MonoBehaviour {
         }
         else {  Destroy(gameObject); return;  }
 
+        SceneManager.sceneLoaded += OnSceneLoaded;
         Initialize();
     }
 
@@ -26,13 +29,19 @@ public class GameManager : MonoBehaviour {
     {
         GameData.Load();
         checkpointDictionary = GameData.GetCheckpoints();
+
+        int sceneIndex = ActiveSceneIndex();
+        PlayerResources.Coins = GameData.GetCoinCount(sceneIndex);
+        destroyedCoins = GameData.GetDestroyedCoins(sceneIndex);
+
+        //DestroyCollectedCoins();
     }
 
 	// Use this for initialization
 	void Start ()
     {
-		
-	}
+        DestroyCollectedCoins();
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -58,16 +67,68 @@ public class GameManager : MonoBehaviour {
         }
 	}
 
+    public void OnSceneLoaded (Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene " + scene.name + " loaded!");
+        DestroyCollectedCoins();
+    }
+
     public void LoadScene (int sceneIndex)
     {
         SceneManager.LoadSceneAsync(sceneIndex);
+
+        destroyedCoins = GameData.GetDestroyedCoins(sceneIndex);
+
+        PlayerResources.Coins = GameData.GetCoinCount(sceneIndex);
+        //DestroyCollectedCoins();
     }
 
-    public void SavePlayerPosition (Vector3 newPosition)
+
+    private void DestroyCollectedCoins ()
     {
-        int sceneIndex = SceneManager.GetActiveScene().buildIndex;
+        foreach (var coin in GameObject.FindGameObjectsWithTag("PickUpCoin"))
+        {
+            Debug.Log("Analyzing " + coin.name);
+
+            if (destroyedCoins.Exists(x => x == coin.name))
+            {                
+                Debug.LogWarning("Destroying " + coin.name);
+                Destroy(coin.gameObject);
+            }
+            else
+            {
+                Debug.Log("Adding callback to " + coin.name);
+                coin.GetComponent<PickUpCoin>().OnCoinDestroyed += OnCoinDestroyed;
+            }
+        }
+    }
+
+    // Coin info is saved when a Checkpoint is activated, see SaveCheckpoint(..)
+    public void SaveCoinData ()
+    {
+        int sceneIndex = ActiveSceneIndex();
+        GameData.UpdateCoinCount(sceneIndex, PlayerResources.Coins);
+
+        foreach (var coinName in destroyedCoins)
+        {
+            GameData.UpdateDestroyedCoins(sceneIndex, coinName);
+        }
+    }
+
+    public void OnCoinDestroyed (string gameObjectName)
+    {
+        destroyedCoins.Add(gameObjectName);
+        Debug.Log("GameManager::Adding coin \"" + gameObjectName + "\" to destroyed list!");
+    }
+
+    public void SaveCheckpoint (Vector3 newPosition)
+    {
+        int sceneIndex = ActiveSceneIndex();
         checkpointDictionary[sceneIndex] = newPosition;
         savedPosition = newPosition;
+
+        // Coin info is saved when a Checkpoint is activated
+        SaveCoinData();
 
         GameData.SetCheckpoint(sceneIndex, newPosition);
         GameData.Save();
@@ -96,5 +157,12 @@ public class GameManager : MonoBehaviour {
             return true;
         else
             return false;
+    }
+
+    // Gets the active scene's build index; saving the world
+    // one keystroke at a time.
+    private int ActiveSceneIndex ()
+    {
+        return SceneManager.GetActiveScene().buildIndex;
     }
 }

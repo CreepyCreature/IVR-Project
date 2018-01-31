@@ -4,22 +4,22 @@ using UnityEngine;
 
 public static class PlayerResources
 {
-	public static int coins_ { get; private set; }
+	public static int Coins { get; set; }
 
     public delegate void CoinCollected();
-    public static event CoinCollected OnChange;
+    public static event CoinCollected OnCoinChange;
 
     //public PlayerResources () {; }
 
     public static void CollectCoin ()
     {
-        coins_++;
-        if (OnChange != null) OnChange();
+        Coins++;
+        if (OnCoinChange != null) OnCoinChange();
     }
 
     public static void Reset ()
     {
-        coins_ = 0;
-        if (OnChange != null) OnChange();
+        Coins = 0;
+        if (OnCoinChange != null) OnCoinChange();
     }
 }

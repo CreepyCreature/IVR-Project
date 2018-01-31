@@ -15,21 +15,21 @@ public class PlayerInfo : MonoBehaviour
     {
         win_text_.text = "";
         SetCoinCountText();
-        PlayerResources.OnChange += UpdateCoins;
+        PlayerResources.OnCoinChange += UpdateCoins;
     }
 
     public void UpdateCoins ()
     {
         SetCoinCountText();
-        if (PlayerResources.coins_ >= win_condition_ + 2)
+        if (PlayerResources.Coins >= win_condition_ + 2)
         {
             win_text_.text = "COINPOCALYPSE!";
         }
-        else if (PlayerResources.coins_ >= win_condition_ + 1)
+        else if (PlayerResources.Coins >= win_condition_ + 1)
         {
             win_text_.text = "COINTALITY!";
         }
-        else if (PlayerResources.coins_ >= win_condition_)
+        else if (PlayerResources.Coins >= win_condition_)
         {
             win_text_.text = "You Win!";
         }
@@ -37,6 +37,6 @@ public class PlayerInfo : MonoBehaviour
 
     private void SetCoinCountText ()
     {
-        coin_count_text_.text = "Collected Coins: " + PlayerResources.coins_.ToString();
+        coin_count_text_.text = "Collected Coins: " + PlayerResources.Coins.ToString();
     }
 }
