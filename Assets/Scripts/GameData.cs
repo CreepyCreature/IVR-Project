@@ -49,6 +49,9 @@ public class GameData
     [XmlArrayItem(ElementName = "Checkpoint")]
     public List<CheckpointStruct> checkpointsProxy = new List<CheckpointStruct>();
 
+    [XmlElement("LastSceneIndex")]
+    public int lastSceneIndex = 0;
+
     [XmlIgnore]
     private static Dictionary<int, Vector3> checkpoints = new Dictionary<int, Vector3>();
 
@@ -155,11 +158,18 @@ public class GameData
         newCheckpoint.SceneIndex = sceneIndex;
         newCheckpoint.Position = position;
         Instance.checkpointsProxy.Add(newCheckpoint);
+
+        Instance.lastSceneIndex = sceneIndex;
     }
 
     public static Dictionary<int, Vector3> GetCheckpoints ()
     {
         return checkpoints;
+    }
+
+    public static int GetLastScene ()
+    {
+        return Instance.lastSceneIndex;
     }
 
     private static void DeserializeCheckpoints ()
