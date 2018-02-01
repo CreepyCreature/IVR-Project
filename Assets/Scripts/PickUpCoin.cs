@@ -36,7 +36,7 @@ public class PickUpCoin : MonoBehaviour {
 
             if (OnCoinDestroyed != null)
             {
-                Debug.LogWarning("PickUpCoin::Calling OnCoinDestroyed!");
+                // Debug.Log("PickUpCoin::Calling OnCoinDestroyed!");
                 OnCoinDestroyed(gameObject.name);
             } else Debug.LogWarning("PickUpCoin::OnCoinDestroyed is NULL!");
 

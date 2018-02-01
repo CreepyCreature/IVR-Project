@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
@@ -19,19 +20,23 @@ public class GameManager : MonoBehaviour {
             DontDestroyOnLoad(gameObject);
         }
         else {  Destroy(gameObject); return;  }
-
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        
         Initialize();
     }
 
     private void Initialize ()
     {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
         GameData.Load();
         checkpointDictionary = GameData.GetCheckpoints();
 
         int sceneIndex = ActiveSceneIndex();
         PlayerResources.Coins = GameData.GetCoinCount(sceneIndex);
         destroyedCoins = GameData.GetDestroyedCoins(sceneIndex);
+        //destroyedItems = GameData.GetDestroyedItems(sceneIndex);
+
+        PlayerResources.OnItemCollected += OnItemCollected;
     }
 
 	void Start ()
@@ -58,24 +63,37 @@ public class GameManager : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.KeypadMinus))
         {
-            GameData.Clear();
+            ResetGameState();
         }
 	}
 
     public void OnSceneLoaded (Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("Scene " + scene.name + " loaded!");
+        Debug.Log("Scene \"" + scene.name + "\" loaded!");
         DestroyCollectedCoins();
     }
 
     public void LoadScene (int sceneIndex)
     {
-        SceneManager.LoadSceneAsync(sceneIndex);
+        //SceneManager.LoadSceneAsync(sceneIndex);
+        StartCoroutine(LoadSceneAsync(sceneIndex));
 
         destroyedCoins = GameData.GetDestroyedCoins(sceneIndex);
         PlayerResources.Coins = GameData.GetCoinCount(sceneIndex);
     }
 
+    private IEnumerator LoadSceneAsync (int sceneIndex)
+    {
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Single);
+
+        while (!asyncOperation.isDone)
+        {
+            float progress = Mathf.Clamp01(asyncOperation.progress / 0.9f);
+
+            Debug.Log(progress);
+            yield return null;
+        }
+    }
 
     private void DestroyCollectedCoins ()
     {
@@ -85,14 +103,34 @@ public class GameManager : MonoBehaviour {
 
             if (destroyedCoins.Exists(x => x == coin.name))
             {                
-                Debug.LogWarning("Destroying " + coin.name);
+                // Debug.LogWarning("Destroying " + coin.name);
                 Destroy(coin.gameObject);
             }
             else
             {
-                Debug.Log("Adding callback to " + coin.name);
+                // Debug.Log("Adding callback to " + coin.name);
                 coin.GetComponent<PickUpCoin>().OnCoinDestroyed += OnCoinDestroyed;
             }
+        }
+
+        foreach (var item in GameObject.FindGameObjectsWithTag("PickUp"))
+        {
+            Debug.Log("Analyzing " + item.name);
+
+            if (destroyedCoins.Exists(x => x == item.name))
+            {
+                Debug.LogWarning("Destroying " + item.name);
+                Destroy(item.gameObject);
+            }
+            else
+            {
+                Debug.Log("Adding callback to " + item.name);
+                item.GetComponent<PickupItem>().OnPickUpItemDestroyed += OnItemDestroyed;
+            }
+        }
+        foreach (var it in destroyedCoins)
+        {
+            Debug.Log(it);
         }
     }
 
@@ -111,7 +149,12 @@ public class GameManager : MonoBehaviour {
     public void OnCoinDestroyed (string gameObjectName)
     {
         destroyedCoins.Add(gameObjectName);
-        Debug.Log("GameManager::Adding coin \"" + gameObjectName + "\" to destroyed list!");
+        // Debug.Log("GameManager::Adding coin \"" + gameObjectName + "\" to destroyed list!");
+    }
+
+    public void OnItemDestroyed (string gameObjectName)
+    {
+        destroyedCoins.Add(gameObjectName);
     }
 
     public void SaveCheckpoint (Vector3 newPosition)
@@ -150,6 +193,12 @@ public class GameManager : MonoBehaviour {
             return true;
         else
             return false;
+    }
+
+    public void OnItemCollected (PickupItemInfo item)
+    {
+        GameData.SaveInventoryItem(item);
+        InventoryPanel.Instance.Populate();
     }
 
     public void ResetGameState ()

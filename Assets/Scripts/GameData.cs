@@ -52,6 +52,10 @@ public class GameData
     [XmlElement("LastSceneIndex")]
     public int lastSceneIndex = 0;
 
+    [XmlArray("InventoryItems")]
+    [XmlArrayItem(ElementName = "InventoryItem")]
+    public List<PickupItemInfo> inventoryItems = new List<PickupItemInfo>();
+
     [XmlIgnore]
     private static Dictionary<int, Vector3> checkpoints = new Dictionary<int, Vector3>();
 
@@ -93,10 +97,24 @@ public class GameData
         Instance.coinCountProxy.Clear();
         Instance.checkpointsProxy.Clear();
         checkpoints.Clear();
+        Instance.inventoryItems.Clear();
         Save();
     }
 
     public static void UpdateDestroyedCoins (int sceneIndex, string coinName)
+    {
+        if (Instance.destroyedCoins.Exists(x => x.SceneIndex == sceneIndex && x.CoinName == coinName))
+        {
+            return;
+        }
+
+        DestroyedCoinStruct coinStruct = new DestroyedCoinStruct();
+        coinStruct.SceneIndex = sceneIndex;
+        coinStruct.CoinName = coinName;
+        Instance.destroyedCoins.Add(coinStruct);
+    }
+
+    public static void UpdateDestroyedItems(int sceneIndex, string coinName)
     {
         if (Instance.destroyedCoins.Exists(x => x.SceneIndex == sceneIndex && x.CoinName == coinName))
         {
@@ -179,5 +197,15 @@ public class GameData
         {
             checkpoints[c.SceneIndex] = c.Position;
         }
+    }
+
+    public static void SaveInventoryItem (PickupItemInfo item)
+    {
+        Instance.inventoryItems.Add(item);
+    }
+
+    public static List<PickupItemInfo> GetInventoryItems ()
+    {
+        return Instance.inventoryItems;
     }
 }
