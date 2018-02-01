@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour {
     private Vector3 savedPosition;
     private Dictionary<int, Vector3> checkpointDictionary = new Dictionary<int, Vector3>();
     private List<string> destroyedCoins = new List<string>();
+
+    private List<PickupItemInfo> pickUpItems = new List<PickupItemInfo>();
     
     void Awake ()
     {
@@ -34,6 +36,7 @@ public class GameManager : MonoBehaviour {
         int sceneIndex = ActiveSceneIndex();
         PlayerResources.Coins = GameData.GetCoinCount(sceneIndex);
         destroyedCoins = GameData.GetDestroyedCoins(sceneIndex);
+        pickUpItems = GameData.GetInventoryItems();
         //destroyedItems = GameData.GetDestroyedItems(sceneIndex);
 
         PlayerResources.OnItemCollected += OnItemCollected;
@@ -76,10 +79,18 @@ public class GameManager : MonoBehaviour {
     public void LoadScene (int sceneIndex)
     {
         //SceneManager.LoadSceneAsync(sceneIndex);
-        StartCoroutine(LoadSceneAsync(sceneIndex));
-
+        pickUpItems.Clear();
         destroyedCoins = GameData.GetDestroyedCoins(sceneIndex);
         PlayerResources.Coins = GameData.GetCoinCount(sceneIndex);
+        pickUpItems = GameData.GetInventoryItems();
+
+        Debug.LogWarning("In LoadScene");
+        foreach (var i in pickUpItems)
+        {
+            Debug.Log(i.name);
+        }
+
+        StartCoroutine(LoadSceneAsync(sceneIndex));
     }
 
     private IEnumerator LoadSceneAsync (int sceneIndex)
@@ -165,11 +176,12 @@ public class GameManager : MonoBehaviour {
 
         // Coin info is saved when a Checkpoint is activated
         SaveCoinData();
+        SaveInventoryData();
 
         GameData.SetCheckpoint(sceneIndex, newPosition);
         GameData.Save();
 
-        // Debug.Log("GameManager::Saving Player position " + checkpointDictionary[sceneIndex] + " at Scene Index "+ sceneIndex);
+        Debug.Log("GameManager::Saving Player position " + checkpointDictionary[sceneIndex] + " at Scene Index "+ sceneIndex);
     }
 
     public Vector3 GetPlayerPosition (int sceneIndex = -1)
@@ -197,14 +209,31 @@ public class GameManager : MonoBehaviour {
 
     public void OnItemCollected (PickupItemInfo item)
     {
-        GameData.SaveInventoryItem(item);
+        // GameData.SaveInventoryItem(item);
+        Debug.Log("Collected " + item.name);
+        pickUpItems.Add(item);
         InventoryPanel.Instance.Populate();
+    }
+
+    private void SaveInventoryData ()
+    {
+        foreach (var inventoryItem in pickUpItems)
+        {
+            Debug.Log("Calling SaveInventoryData with " + inventoryItem.name);
+            GameData.SaveInventoryItem(inventoryItem);
+        }
+    }
+
+    public List<PickupItemInfo> GetInventoryList ()
+    {
+        return pickUpItems;
     }
 
     public void ResetGameState ()
     {
         checkpointDictionary.Clear();
         destroyedCoins.Clear();
+        PlayerResources.Reset();
         GameData.Clear();
     }
 

@@ -31,7 +31,8 @@ public class InventoryPanel : MonoBehaviour {
         }
         entryInstances.Clear();
 
-        foreach (var item in GameData.Instance.inventoryItems)
+        //foreach (var item in GameData.Instance.inventoryItems)
+        foreach (var item in GameManager.Instance.GetInventoryList())
         {
             Debug.Log(item.id + " " + item.name + ": " + item.description);
             var entryInstance = CreateItemInstance(item);

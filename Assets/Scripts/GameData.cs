@@ -61,6 +61,11 @@ public class GameData
 
     public static void Save ()
     {
+        foreach (var i in Instance.inventoryItems)
+        {
+            Debug.LogWarning(i.name);
+        }
+
         XmlSerializer serializer = new XmlSerializer(typeof(GameData));
         FileStream fileStream = new FileStream(gameDataFile, FileMode.Create);
         serializer.Serialize(fileStream, Instance);
@@ -201,11 +206,22 @@ public class GameData
 
     public static void SaveInventoryItem (PickupItemInfo item)
     {
+        if (Instance.inventoryItems.Exists(x => x.id == item.id))
+        {
+            Instance.inventoryItems.RemoveAll(x => x.id == item.id);
+        }
+
         Instance.inventoryItems.Add(item);
+        Debug.Log("Added " + item.name);
+
+        foreach (var i in Instance.inventoryItems)
+        {
+            Debug.Log(i.name);
+        }
     }
 
     public static List<PickupItemInfo> GetInventoryItems ()
     {
-        return Instance.inventoryItems;
+        return Instance.inventoryItems.ToList();
     }
 }
